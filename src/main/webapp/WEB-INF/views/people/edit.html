@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update person</title>
+</head>
+<body>
+
+<!-- We only can use PATCH with thymeleaf method.
+     THERE IS NO PATCH method in html forms
+-->
+<form th:method="PATCH" th:action="@{/people/{id}(id=${person.getId()})}" th:object="${person}">
+  <label for="name">Enter name: </label>
+  <!-- Name entered by user will be assigned to a "person" and will be used in PeopleController in create() method -->
+  <input type="text" th:field="*{name}" id="name"/>
+  <br/>
+  <input type="submit" value="Update!"/>
+</form>
+
+</body>
+</html>

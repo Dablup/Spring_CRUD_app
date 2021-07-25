@@ -54,4 +54,24 @@ public class PeopleController {
         personDAO.save(person);
         return "redirect:/people";
     }
+
+    @GetMapping("/{id}/edit")
+    public String edit(Model model, @PathVariable("id") int id){
+        model.addAttribute("person",personDAO.show(id));
+        return "people/edit";
+    }
+
+    // Method which will deal with PATCH requests
+    // PATCH request will be sent on localhost:8080/people/{id} by form in edit.html
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("person") Person person, @PathVariable("id") int id){
+        personDAO.update(id,person);
+        return "redirect:/people";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id){
+        personDAO.delete(id);
+        return "redirect:/people";
+    }
 }

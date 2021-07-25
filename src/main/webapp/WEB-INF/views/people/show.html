@@ -7,5 +7,18 @@
 <body>
 Name is: <p th:text="${person.getName()}"></p>
 Id is: <p th:text="${person.getId()}"></p>
+
+<a th:href="@{/people/{id}/edit(id = ${person.getId()})}">Change the name!</a>
+
+<!--Form to delete a person
+    this form will send a DELETE request to the people/id
+    method that work with this request is implemented in the controller
+-->
+<br>
+<form th:method="DELETE" th:action="@{/people/{id}(id = ${person.getId()})}">
+    <input type="submit" value="Delete this person">
+</form>
+
+
 </body>
 </html>
