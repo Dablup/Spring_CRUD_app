@@ -2,10 +2,15 @@ package dlivitin.crudapp.controllers;
 
 import dlivitin.crudapp.dao.PersonDAO;
 import dlivitin.crudapp.models.Person;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/people")
@@ -41,9 +46,13 @@ public class PeopleController {
     }
 
     // PostMapping will work only with POST requests ( when we want to save smth on the server/db ...)
+    // To validate a data entered by user we need to specify rules in class Person and use annotation @Valid before object in
+    // parameters
+    // If there is some error the object of BindingResult will be created
 
     @PostMapping()
-    public String create(@ModelAttribute("person") Person person){
+    public String create(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult) {
         // Annotation @ModelAttribute will create an object automatically with specified fields in html form
         // It does the same as:
 
@@ -51,9 +60,20 @@ public class PeopleController {
         // Person person = new Person();
         // person.setName(name);
         // model.addAttribute("person", person);
+
+        // If user entered something with error then we need to return a page with form to create a new person again
+        // We will return a page people/new with errors colored in red
+        // We pass invalid object 'Person' to the page "people/new"
+        // On page ../new we have thymeleaf tag which check if object has errors
+        // If object has errors then we print red messages (see html form in "people/new")
+        // The same happening with PATCH request
+        if (bindingResult.hasErrors())
+            return "people/new";
+
         personDAO.save(person);
         return "redirect:/people";
     }
+
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id){
@@ -64,8 +84,12 @@ public class PeopleController {
     // Method which will deal with PATCH requests
     // PATCH request will be sent on localhost:8080/people/{id} by form in edit.html
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person, @PathVariable("id") int id){
-        personDAO.update(id,person);
+    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
+                         @PathVariable("id") int id) {
+        if (bindingResult.hasErrors())
+            return "people/edit";
+
+        personDAO.update(id, person);
         return "redirect:/people";
     }
 
